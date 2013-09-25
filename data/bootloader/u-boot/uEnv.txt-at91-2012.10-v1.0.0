@@ -1,0 +1,10 @@
+# u-boot environment settings
+
+#bootfile=zImage
+#dtbfile=cosino.dtb
+
+#console=ttyS0,115200
+#optargs=loglevel=8
+
+#mmcroot=/dev/mmcblk0p2 rw
+#mmcrootfstype=ext4 rootwait
