@@ -102,3 +102,6 @@ tar -C /mnt/ -xvjf kernel/latest-modules --strip-components=1
 #tar -C /mnt/ -xvjf kernel/latest-headers --strip-components=1
 umount /mnt
 fsck.ext4 -D $devp2
+
+echo "$NAME: done!"
+exit 0
