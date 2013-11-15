@@ -84,9 +84,9 @@ echo "$NAME: building boot partition..."
 mkfs.vfat -n boot $devp1
 mount $devp1 /mnt/
 cp bootloader/at91bootstrap/latest-sdcardboot /mnt/boot.bin
-cp bootloader/u-boot/latest /mnt/u-boot.bin
-cp bootloader/u-boot/latest.uEnv /mnt/uEnv.txt
-cat kernel/latest kernel/latest.dtb > /mnt/zImage
+cp bootloader/u-boot/latest-nandflash /mnt/u-boot.bin
+cp bootloader/u-boot/latest-uEnv-nandflash /mnt/uEnv.txt
+cat kernel/latest-debian kernel/latest-dtb-debian > /mnt/zImage
 umount /mnt
 fsck.vfat -a $devp1
 
