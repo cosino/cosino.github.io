@@ -17,9 +17,9 @@ function mega2560_prog () {
 }
 
 function mega2560_reset () {
-	echo 1 > /sys/class/gpio/$GPIO_NAME/value
+	bash -c "echo 1 > /sys/class/gpio/$GPIO_NAME/value"
 	sleep 1
-	echo 0 > /sys/class/gpio/$GPIO_NAME/value
+	bash -c "echo 0 > /sys/class/gpio/$GPIO_NAME/value"
 }
 
 #
@@ -39,7 +39,7 @@ opt=$2
 set +e
 
 bash -c "echo $GPIO_NUM > /sys/class/gpio/export" 2>/dev/null
-echo out > /sys/class/gpio/$GPIO_NAME/direction
+bash -c "echo out > /sys/class/gpio/$GPIO_NAME/direction"
 
 case $cmd in
 prog)
