@@ -11,9 +11,8 @@ NAME=$(basename $0)
 #
 
 function usage() {
-        echo "usage: $NAME [-t|--root-type <name>] <device>" >&2
-        echo -e "\tnote: default type is \"$type\"." >&2
-        echo -e "\tnote: you must be root to execute this program!" >&2
+	echo "usage: $NAME <device>" >&2
+	echo -e "\tnote: you must be root to execute this program!" >&2
         exit 1
 }
 
@@ -84,7 +83,7 @@ echo -e 'p\nn\np\n1\n\n+16M\nn\np\n2\n\n\nt\n1\ne\nw\n' | fdisk $dev
 echo "$NAME: building boot partition..."
 mkfs.vfat -n boot $devp1
 mount $devp1 /mnt/
-cp bootloader/at91bootstrap/latest /mnt/boot.bin
+cp bootloader/at91bootstrap/latest-sdcardboot /mnt/boot.bin
 cp bootloader/u-boot/latest /mnt/u-boot.bin
 cp bootloader/u-boot/latest.uEnv /mnt/uEnv.txt
 cat kernel/latest kernel/latest.dtb > /mnt/zImage
