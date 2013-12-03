@@ -84,8 +84,8 @@ echo "$NAME: building boot partition..."
 mkfs.vfat -n boot $devp1
 mount $devp1 /mnt/
 cp bootloader/at91bootstrap/latest-sdcardboot /mnt/boot.bin
-cp bootloader/u-boot/latest-nandflash /mnt/u-boot.bin
-cp bootloader/u-boot/latest-uEnv-nandflash /mnt/uEnv.txt
+cp bootloader/u-boot/latest-sdcardboot /mnt/u-boot.bin
+cp bootloader/u-boot/latest-uEnv-sdcardboot /mnt/uEnv.txt
 cat kernel/latest-debian kernel/latest-dtb-debian > /mnt/zImage
 umount /mnt
 fsck.vfat -a $devp1
@@ -98,8 +98,8 @@ mount $devp2 /mnt/
 f=$(readlink -f distro/debian/latest)
 cat ${f/-00/-}* | tar -C /mnt/ -xvjf - --strip-components=1
 #tar -C /mnt/ -xvjf distro/debian/latest --strip-components=1
-tar -C /mnt/ -xvjf kernel/latest-modules --strip-components=1
-#tar -C /mnt/ -xvjf kernel/latest-headers --strip-components=1
+tar -C /mnt/ -xvjf kernel/latest-modules-debian --strip-components=1
+#tar -C /mnt/ -xvjf kernel/latest-headers-debian --strip-components=1
 umount /mnt
 fsck.ext4 -D $devp2
 
