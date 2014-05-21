@@ -11,7 +11,9 @@ NAME=$(basename $0)
 #
 
 function usage() {
-	echo "usage: $NAME <device>" >&2
+	echo "usage: $NAME [OPTIONS] <device>" >&2
+	echo -e "\twhere OPTIONS are:" >&2
+	echo -e "\t  -h|--help                 : display this help and exit" >&2
 	echo -e "\tnote: you must be root to execute this program!" >&2
         exit 1
 }
@@ -20,12 +22,12 @@ function usage() {
 # Main
 #
 
-TEMP=$(getopt -o h -n $NAME -- "$@")
+TEMP=$(getopt -o h --long help -n $NAME -- "$@")
 [ $? != 0 ] && exit 1
 eval set -- "$TEMP"
 while true ; do
         case "$1" in
-        -h)
+	-h|--help)
                 usage
                 ;;
 
