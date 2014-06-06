@@ -105,9 +105,8 @@ tune2fs -O dir_index $devp2
 mount $devp2 /mnt/
 f=$(readlink -f distro/debian/latest)
 cat ${f/-00/-}* | tar -C /mnt/ -xvjf - --strip-components=1
-#tar -C /mnt/ -xvjf distro/debian/latest --strip-components=1
-tar -C /mnt/ -xvjf kernel/latest-modules-debian --strip-components=1
-#tar -C /mnt/ -xvjf kernel/latest-headers-debian --strip-components=1
+tar -C /mnt/ -xvjf kernel/latest-modules-debian
+tar -C /mnt/ -xvjf kernel/latest-headers-debian
 
 if [ -n "$ADD_WIFI" ] ; then
 	tar -C /mnt/ -xvzf extensions/mega_2560/latest-wf111-kernel
