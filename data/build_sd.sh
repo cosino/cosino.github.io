@@ -14,6 +14,7 @@ function usage() {
 	echo "usage: $NAME [OPTIONS] <device>" >&2
 	echo -e "\twhere OPTIONS are:" >&2
 	echo -e "\t  --add-wifi                : add wifi support" >&2
+	echo -e "\t  --format-only             : format the card without adding any files" >&2
 	echo -e "\t  -h|--help                 : display this help and exit" >&2
 	echo -e "\tnote: you must be root to execute this program!" >&2
         exit 1
@@ -23,7 +24,7 @@ function usage() {
 # Main
 #
 
-TEMP=$(getopt -o h --long help,add-wifi -n $NAME -- "$@")
+TEMP=$(getopt -o h --long help,add-wifi,format-only -n $NAME -- "$@")
 [ $? != 0 ] && exit 1
 eval set -- "$TEMP"
 while true ; do
@@ -34,6 +35,11 @@ while true ; do
 
 	--add-wifi)
 		ADD_WIFI=y
+		shift
+		;;
+
+	--format-only)
+		FORMAT_ONLY=y
 		shift
 		;;
 
@@ -90,33 +96,37 @@ echo -e 'p\nn\np\n1\n\n+16M\nn\np\n2\n\n\nt\n1\ne\nw\n' | fdisk $dev
 
 echo "$NAME: building boot partition..."
 mkfs.vfat -n boot $devp1
-mount $devp1 /mnt/
-cp bootloader/at91bootstrap/latest-sdcardboot /mnt/boot.bin
-cp bootloader/u-boot/latest-sdcardboot /mnt/u-boot.bin
-cp bootloader/u-boot/latest-uEnv-sdcardboot /mnt/uEnv.txt
-cat kernel/latest-debian kernel/latest-dtb-debian > /mnt/zImage
-umount /mnt
+if [ -z "$FORMAT_ONLY" ] ; then
+	mount $devp1 /mnt/
+	cp bootloader/at91bootstrap/latest-sdcardboot /mnt/boot.bin
+	cp bootloader/u-boot/latest-sdcardboot /mnt/u-boot.bin
+	cp bootloader/u-boot/latest-uEnv-sdcardboot /mnt/uEnv.txt
+	cat kernel/latest-debian kernel/latest-dtb-debian > /mnt/zImage
+	umount /mnt
+fi
 fsck.vfat -a $devp1
 
 echo "$NAME: building root partition..."
 mkfs.ext4 -L root $devp2
 tune2fs -O has_journal -o journal_data_ordered $devp2
 tune2fs -O dir_index $devp2
-mount $devp2 /mnt/
-f=$(readlink -f distro/debian/latest)
-cat ${f/-00/-}* | tar -C /mnt/ -xvjf - --strip-components=1
-tar -C /mnt/ -xvjf kernel/latest-modules-debian
-tar -C /mnt/ -xvjf kernel/latest-headers-debian
-
-if [ -n "$ADD_WIFI" ] ; then
-	tar -C /mnt/ -xvzf extensions/mega_2560/latest-wf111-kernel
-	tar -C /mnt/ -xvzf extensions/mega_2560/latest-wf111-userspace
-
-	echo 'options unifi_sdio sdio_clock=4000' > \
-				/mnt/etc/modprobe.d/unifi.conf
+if [ -z "$FORMAT_ONLY" ] ; then
+	mount $devp2 /mnt/
+	f=$(readlink -f distro/debian/latest)
+	cat ${f/-00/-}* | tar -C /mnt/ -xvjf - --strip-components=1
+	tar -C /mnt/ -xvjf kernel/latest-modules-debian
+	tar -C /mnt/ -xvjf kernel/latest-headers-debian
+	
+	if [ -n "$ADD_WIFI" ] ; then
+		tar -C /mnt/ -xvzf extensions/mega_2560/latest-wf111-kernel
+		tar -C /mnt/ -xvzf extensions/mega_2560/latest-wf111-userspace
+	
+		echo 'options unifi_sdio sdio_clock=4000' > \
+					/mnt/etc/modprobe.d/unifi.conf
+	fi
+	
+	umount /mnt
 fi
-
-umount /mnt
 fsck.ext4 -D $devp2
 
 echo "$NAME: done!"
