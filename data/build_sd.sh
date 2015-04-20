@@ -5,6 +5,7 @@
 #
 
 NAME=$(basename $0)
+BOARD=cosino
 
 #
 # Functions
@@ -98,10 +99,10 @@ echo "$NAME: building boot partition..."
 mkfs.vfat -n boot $devp1
 if [ -z "$FORMAT_ONLY" ] ; then
 	mount $devp1 /mnt/
-	cp bootloader/at91bootstrap/latest-sdcardboot /mnt/boot.bin
-	cp bootloader/u-boot/latest-sdcardboot /mnt/u-boot.bin
-	cp bootloader/u-boot/latest-uEnv-sdcardboot /mnt/uEnv.txt
-	cat kernel/latest-debian kernel/latest-dtb-debian > /mnt/zImage
+	cp bootloader/$BOARD/at91bootstrap/latest-sdcardboot /mnt/boot.bin
+	cp bootloader/$BOARD/u-boot/latest-sdcardboot /mnt/u-boot.bin
+	cp bootloader/$BOARD/u-boot/latest-uEnv-sdcardboot /mnt/uEnv.txt
+	cat kernel/$BOARD/latest-debian kernel/$BOARD/latest-dtb-debian > /mnt/zImage
 	umount /mnt
 fi
 fsck.vfat -a $devp1
@@ -112,10 +113,10 @@ tune2fs -O has_journal -o journal_data_ordered $devp2
 tune2fs -O dir_index $devp2
 if [ -z "$FORMAT_ONLY" ] ; then
 	mount $devp2 /mnt/
-	f=$(readlink -f distro/debian/latest)
+	f=$(readlink -f distro/$BOARD/debian/latest)
 	cat ${f/-00/-}* | tar -C /mnt/ -xvjf - --strip-components=1
-	tar -C /mnt/ -xvjf kernel/latest-modules-debian
-	tar -C /mnt/ -xvjf kernel/latest-headers-debian
+	tar -C /mnt/ -xvjf kernel/$BOARD/latest-modules-debian
+	tar -C /mnt/ -xvjf kernel/$BOARD/latest-headers-debian
 	
 	if [ -n "$ADD_WIFI" ] ; then
 		tar -C /mnt/ -xvzf extensions/mega_2560/latest-wf111-kernel
