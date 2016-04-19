@@ -80,6 +80,8 @@ fi
 # Display current content
 echo -e "$NAME: device $dev is currently hold the following data:\n"
 fdisk -l $dev | sed -e 's/^/   /'
+echo -e "-------------------------------------------------------------------------------"
+lsblk $dev
 echo -e "\n$NAME: press ENTER to continue erasing ALL DATA, or just hit CTRL-C to"
 echo "$NAME: stop here! :-)"
 read ans
