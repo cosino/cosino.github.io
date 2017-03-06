@@ -121,8 +121,10 @@ if [ -z "$FORMAT_ONLY" ] ; then
 	tar -C /mnt/ -xvjf kernel/$BOARD/latest-headers-debian
 	
 	if [ -n "$ADD_WIFI" ] ; then
-		tar -C /mnt/ -xvzf extensions/mega_2560/latest-wf111-kernel
-		tar -C /mnt/ -xvzf extensions/mega_2560/latest-wf111-userspace
+		tar -C /mnt/ \
+		    -xvzf extensions/$BOARD/mega_2560/latest-wf111-kernel
+		tar -C /mnt/ \
+		    -xvzf extensions/$BOARD/mega_2560/latest-wf111-userspace
 	
 		echo 'options unifi_sdio sdio_clock=4000' > \
 					/mnt/etc/modprobe.d/unifi.conf
