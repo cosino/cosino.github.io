@@ -6,6 +6,7 @@
 
 NAME=$(basename $0)
 BOARD=cosino
+EXTENSION=mega_2560
 
 #
 # Functions
@@ -125,9 +126,9 @@ if [ -z "$FORMAT_ONLY" ] ; then
 			echo "$NAME: WARINIG! No wifi extensions to add!"
 		else
 			tar -C /mnt/ -xvzf \
-				extensions/$BOARD/mega_2560/latest-wf111-kernel
+				extensions/$BOARD/$EXTENSION/latest-wf111-kernel
 			tar -C /mnt/ -xvzf \
-				extensions/$BOARD/mega_2560/latest-wf111-userspace
+				extensions/$BOARD/$EXTENSION/latest-wf111-userspace
 	
 			echo 'options unifi_sdio sdio_clock=4000' > \
 					/mnt/etc/modprobe.d/unifi.conf
