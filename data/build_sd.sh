@@ -15,7 +15,6 @@ EXTENSION=mega_2560
 function usage() {
 	echo "usage: $NAME [OPTIONS] <device>" >&2
 	echo -e "\twhere OPTIONS are:" >&2
-	echo -e "\t  --add-wifi                : add wifi support" >&2
 	echo -e "\t  --format-only             : format the card without adding any files" >&2
 	echo -e "\t  -h|--help                 : display this help and exit" >&2
 	echo -e "\tnote: you must be root to execute this program!" >&2
@@ -26,7 +25,7 @@ function usage() {
 # Main
 #
 
-TEMP=$(getopt -o h --long help,add-wifi,format-only -n $NAME -- "$@")
+TEMP=$(getopt -o h --long help,format-only -n $NAME -- "$@")
 [ $? != 0 ] && exit 1
 eval set -- "$TEMP"
 while true ; do
@@ -34,11 +33,6 @@ while true ; do
 	-h|--help)
                 usage
                 ;;
-
-	--add-wifi)
-		ADD_WIFI=y
-		shift
-		;;
 
 	--format-only)
 		FORMAT_ONLY=y
@@ -121,18 +115,10 @@ if [ -z "$FORMAT_ONLY" ] ; then
 	tar -C /mnt/ -xvjf kernel/$BOARD/latest-modules-debian
 	tar -C /mnt/ -xvjf kernel/$BOARD/latest-headers-debian
 	
-	if [ -n "$ADD_WIFI" ] ; then
-		if [ ! -d extensions/$BOARD ] ; then
-			echo "$NAME: WARINIG! No wifi extensions to add!"
-		else
-			tar -C /mnt/ -xvzf \
-				extensions/$BOARD/$EXTENSION/latest-wf111-kernel
-			tar -C /mnt/ -xvzf \
-				extensions/$BOARD/$EXTENSION/latest-wf111-userspace
-	
-			echo 'options unifi_sdio sdio_clock=4000' > \
-					/mnt/etc/modprobe.d/unifi.conf
-		fi
+	if [ ! -d extensions/$BOARD ] ; then
+		echo "$NAME: WARINIG! No ${board}'s extensions to add!"
+	else
+		tar -C /mnt/ -xvjf extensions/$BOARD/$EXTENSION/latest-rootfs
 	fi
 	
 	umount /mnt
