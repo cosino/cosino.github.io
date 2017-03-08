@@ -121,13 +121,17 @@ if [ -z "$FORMAT_ONLY" ] ; then
 	tar -C /mnt/ -xvjf kernel/$BOARD/latest-headers-debian
 	
 	if [ -n "$ADD_WIFI" ] ; then
-		tar -C /mnt/ \
-		    -xvzf extensions/$BOARD/mega_2560/latest-wf111-kernel
-		tar -C /mnt/ \
-		    -xvzf extensions/$BOARD/mega_2560/latest-wf111-userspace
+		if [ ! -d extensions/$BOARD ] ; then
+			echo "$NAME: WARINIG! No wifi extensions to add!"
+		else
+			tar -C /mnt/ -xvzf \
+				extensions/$BOARD/mega_2560/latest-wf111-kernel
+			tar -C /mnt/ -xvzf \
+				extensions/$BOARD/mega_2560/latest-wf111-userspace
 	
-		echo 'options unifi_sdio sdio_clock=4000' > \
+			echo 'options unifi_sdio sdio_clock=4000' > \
 					/mnt/etc/modprobe.d/unifi.conf
+		fi
 	fi
 	
 	umount /mnt
